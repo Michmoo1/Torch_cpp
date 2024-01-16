@@ -1,21 +1,30 @@
-cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.5)
 project(torch_app)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(Torch REQUIRED)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
+
+option(DOWNLOAD_MNIST "Download the MNIST dataset from the internet" ON)
+if (DOWNLOAD_MNIST)
+  message(STATUS "Downloading MNIST dataset")
+  execute_process(
+    COMMAND python ${CMAKE_CURRENT_LIST_DIR}/../tools/download_mnist.py
+      -d ${CMAKE_BINARY_DIR}/data
+    ERROR_VARIABLE DOWNLOAD_ERROR)
+  if (DOWNLOAD_ERROR)
+    message(FATAL_ERROR "Error downloading MNIST dataset: ${DOWNLOAD_ERROR}")
+  endif()
+endif()
 
 add_executable(torch_app torch_app.cpp)
-target_link_libraries(torch_app "${TORCH_LIBRARIES}")
-set_property(TARGET torch_app PROPERTY CXX_STANDARD 17)
+target_compile_features(torch_app PUBLIC cxx_range_for)
+target_link_libraries(torch_app ${TORCH_LIBRARIES})
 
-# The following code block is suggested to be used on Windows.
-# According to https://github.com/pytorch/pytorch/issues/25457,
-# the DLLs need to be copied to avoid memory errors.
 if (MSVC)
   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-  add_custom_command(TARGET torch-app
+  add_custom_command(TARGET torch_app
                      POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
                      ${TORCH_DLLS}
-                     $<TARGET_FILE_DIR:torch-app>)
+                     $<TARGET_FILE_DIR:Torch_cpp>)
 endif (MSVC)
