@@ -86,7 +86,7 @@ int main()
             torch::Tensor loss = criterion->forward(prediction, batch.target);
             test_loss_print = loss;   
         }
-        std::cout << loss_print. << std::endl;
+        std::cout << loss_print << std::endl;
         std::cout << test_loss_print << std::endl;
     }
     
