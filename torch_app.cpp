@@ -49,16 +49,25 @@ int main()
     std::cout << tensor << std::endl;
 
     Net myNetwork = Net();
-    /**/
+
+    // Train Data
     auto train_dataset = torch::data::datasets::MNIST("./")
         .map(torch::data::transforms::Stack<>());
 
     auto train_data_loader = torch::data::make_data_loader(
         std::move(train_dataset), 64);
     
+    // Test data
+     auto test_dataset = torch::data::datasets::MNIST("./", torch::data::datasets::MNIST::Mode::kTest)
+                          .map(torch::data::transforms::Stack<>());
+    auto test_data_loader = torch::data::make_data_loader(
+        std::move(test_dataset), 64);
+
     torch::optim::SGD optimizer(myNetwork.parameters(), torch::optim::SGDOptions(0.01).momentum(0.5));
     torch::nn::NLLLoss criterion;
     torch::Tensor loss_print;
+    torch::Tensor test_loss_print;
+
     for (size_t epoch = 1; epoch <= epochs; ++epoch) {
         for (auto& batch : *train_data_loader)
         {
@@ -71,9 +80,14 @@ int main()
             optimizer.step();
             loss_print = loss;   
         }
-        
-        std::cout << loss_print << std::endl;
+        for (auto& batch : *test_data_loader)
+        {
+            torch::Tensor prediction = myNetwork.forward(batch.data);
+            torch::Tensor loss = criterion->forward(prediction, batch.target);
+            test_loss_print = loss;   
+        }
+        std::cout << loss_print. << std::endl;
+        std::cout << test_loss_print << std::endl;
     }
     
-    std::cout << myNetwork.name() <<std::endl;
 }
