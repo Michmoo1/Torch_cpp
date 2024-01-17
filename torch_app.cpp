@@ -86,8 +86,8 @@ int main()
             torch::Tensor loss = criterion->forward(prediction, batch.target);
             test_loss_print = loss;   
         }
-        std::cout << loss_print << std::endl;
-        std::cout << test_loss_print << std::endl;
+        std::printf("\nTrain set: Average loss: %.4f Test set: Average loss: %.4f \n", loss_print.item<double>(),test_loss_print.item<double>());
+
     }
     
 }
