@@ -3,6 +3,10 @@
 wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip
 unzip libtorch-shared-with-deps-latest.zip
 
-cmake -DCMAKE_PREFIX_PATH=..(your absolute path)/Torch_cpp/libtorch
+mkdir build
 
-cmake --build . --config Release
+cd build
+
+cmake -DCMAKE_PREFIX_PATH=..(your absolute path)/Torch_cpp/libtorch ..
+
+make

@@ -4,21 +4,13 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Torch REQUIRED)
 
-option(DOWNLOAD_MNIST "Download the MNIST dataset from the internet" ON)
-if (DOWNLOAD_MNIST)
-  message(STATUS "Downloading MNIST dataset")
-  execute_process(
-    COMMAND python ${CMAKE_CURRENT_LIST_DIR}/../tools/download_mnist.py
-      -d ${CMAKE_BINARY_DIR}/data
-    ERROR_VARIABLE DOWNLOAD_ERROR)
-  if (DOWNLOAD_ERROR)
-    message(FATAL_ERROR "Error downloading MNIST dataset: ${DOWNLOAD_ERROR}")
-  endif()
-endif()
-
 add_executable(torch_app torch_app.cpp)
 target_compile_features(torch_app PUBLIC cxx_range_for)
 target_link_libraries(torch_app ${TORCH_LIBRARIES})
+
+add_executable(Torch_images Torch_images.cpp)
+target_compile_features(Torch_images PUBLIC cxx_range_for)
+target_link_libraries(Torch_images ${TORCH_LIBRARIES})
 
 if (MSVC)
   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
