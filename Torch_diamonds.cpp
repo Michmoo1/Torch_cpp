@@ -1,7 +1,9 @@
 #include <torch/torch.h>
 #include <fstream>
+#include "build/matplotlib-cpp/matplotlibcpp.h"
 
 // some global var
+namespace plt = matplotlibcpp;
 
 class Net : public torch::nn::Module 
 {
@@ -124,5 +126,7 @@ int main()
         torch::Tensor prediction  = myNetwork.forward(example.data);
         std::cout << "Prediction: " << prediction << std::endl;
     }
+    plt::plot({1,3,2,4});
+    plt::show();
     return 0;
 }

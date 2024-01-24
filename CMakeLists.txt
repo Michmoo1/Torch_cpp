@@ -14,9 +14,12 @@ target_compile_features(Torch_images PUBLIC cxx_range_for)
 target_link_libraries(Torch_images ${TORCH_LIBRARIES})
 target_link_libraries(Torch_images "${OpenCV_LIBS}")
 
+find_package(PythonLibs 3)
 add_executable(Torch_diamonds Torch_diamonds.cpp)
 target_compile_features(Torch_diamonds PUBLIC cxx_range_for)
 target_link_libraries(Torch_diamonds ${TORCH_LIBRARIES})
+target_include_directories(Torch_diamonds PRIVATE ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(Torch_diamonds ${PYTHON_LIBRARIES})
 
 if (MSVC)
   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
